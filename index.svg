@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+<svg width="100%" height="100%" viewBox="0 0 800 600" version="1.1" xmlns:xhtml="http://www.w3.org/2000/xhtml" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <script type="text/javascript" xlink:href="./redux.min.js"/>
     <g transform="matrix(1,0,0,0.215247,0,56.5022)">
         <path d="M683,127.75C683,96.981 677.623,72 671,72L128,72C121.377,72 116,96.981 116,127.75L116,239.25C116,270.019 121.377,295 128,295L671,295C677.623,295 683,270.019 683,239.25L683,127.75Z" style="fill:rgb(235,235,235);stroke:black;stroke-width:1.38px;"/>
     </g>
     <g transform="matrix(1,0,0,1,200.4,-109.4)">
-        <path d="M399,197C399,192.585 395.415,189 391,189L375,189C370.585,189 367,192.585 367,197L367,213C367,217.415 370.585,221 375,221L391,221C395.415,221 399,217.415 399,213L399,197Z" style="stroke:black;stroke-width:1px;"/>
+        <path id="increment" d="M399,197C399,192.585 395.415,189 391,189L375,189C370.585,189 367,192.585 367,197L367,213C367,217.415 370.585,221 375,221L391,221C395.415,221 399,217.415 399,213L399,197Z" style="stroke:black;stroke-width:1px;"/>
     </g>
     <g transform="matrix(1,0,0,1,251,-109.4)">
-        <path d="M399,197C399,192.585 395.415,189 391,189L375,189C370.585,189 367,192.585 367,197L367,213C367,217.415 370.585,221 375,221L391,221C395.415,221 399,217.415 399,213L399,197Z" style="stroke:black;stroke-width:1px;"/>
+        <path id="decrement" d="M399,197C399,192.585 395.415,189 391,189L375,189C370.585,189 367,192.585 367,197L367,213C367,217.415 370.585,221 375,221L391,221C395.415,221 399,217.415 399,213L399,197Z" style="stroke:black;stroke-width:1px;"/>
     </g>
     <g transform="matrix(25.7388,0,0,24.6811,575.996,104.043)">
         <path d="M0.25,-0.116L0.25,-0.312L0.056,-0.312L0.056,-0.394L0.25,-0.394L0.25,-0.589L0.333,-0.589L0.333,-0.394L0.528,-0.394L0.528,-0.312L0.333,-0.312L0.333,-0.116L0.25,-0.116Z" style="fill:white;fill-rule:nonzero;"/>
@@ -16,66 +17,54 @@
     <g transform="matrix(25.7388,0,0,24.6811,629.015,101.775)">
         <rect x="0.032" y="-0.303" width="0.27" height="0.088" style="fill:white;fill-rule:nonzero;"/>
     </g>
-    <foreignobject class="node" x="46" y="22" width="100" height="100">
-      <p>
-        Counter: <span id="value">0</span> times
-        <button id="increment">+</button>
-        <button id="decrement">-</button>
-        <button id="incrementIfOdd">Increment if odd</button>
-        <button id="incrementAsync">Increment async</button>
-      </p>
-    </foreignobject>
-    <script type="text/javascript" src="https://unpkg.com/redux@latest/dist/redux.min.js"></script>
-
     <script type="text/javascript">
-      const valueEl = document.getElementById('value')
+  const valueEl = document.getElementById('value')
 
-      function counter(state = 0, action) {
-        switch (action.type) {
-          case 'INCREMENT':
-            return state + 1
-          case 'DECREMENT':
-            return state - 1
-          default:
-            return state
-        }
+  function counter(state = 0, action) {
+    switch (action.type) {
+      case 'INCREMENT':
+        return state + 1
+      case 'DECREMENT':
+        return state - 1
+      default:
+        return state
+    }
+  }
+
+  const store = Redux.createStore(counter)
+
+  function render() {
+    valueEl.innerHTML = store.getState().toString()
+  }
+
+  render()
+  store.subscribe(render)
+
+  document.getElementById('increment')
+    .addEventListener('click', function () {
+      console.log('INCREMENT');
+      store.dispatch({ type: 'INCREMENT' })
+    })
+
+  document.getElementById('decrement')
+    .addEventListener('click', function () {
+      console.log('DECREMENT');
+      store.dispatch({ type: 'DECREMENT' })
+    })
+
+  document.getElementById('incrementIfOdd')
+    .addEventListener('click', function () {
+      if (store.getState() % 2 !== 0) {
+        store.dispatch({ type: 'INCREMENT' })
       }
+    })
 
-      const store = Redux.createStore(counter)
+  document.getElementById('incrementAsync')
+    .addEventListener('click', function () {
+      setTimeout(function () {
+        store.dispatch({ type: 'INCREMENT' })
+      }, 1000)
+    })
 
-      function render() {
-        valueEl.innerHTML = store.getState().toString()
-      }
-
-      render()
-      store.subscribe(render)
-
-      document.getElementById('increment')
-        .addEventListener('click', function () {
-          store.dispatch({ type: 'INCREMENT' })
-        })
-
-      document.getElementById('decrement')
-        .addEventListener('click', function () {
-          store.dispatch({ type: 'DECREMENT' })
-        })
-
-      document.getElementById('incrementIfOdd')
-        .addEventListener('click', function () {
-          if (store.getState() % 2 !== 0) {
-            store.dispatch({ type: 'INCREMENT' })
-          }
-        })
-
-      document.getElementById('incrementAsync')
-        .addEventListener('click', function () {
-          setTimeout(function () {
-            store.dispatch({ type: 'INCREMENT' })
-          }, 1000)
-        })
-
-        console.log('hello');
-
-
-      </script>
+  </script>
 </svg>
